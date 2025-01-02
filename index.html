@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Coin</title>
+    <title>Sucesso</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -83,7 +83,7 @@
             font-size: 16px;
             margin-bottom: 20px;
         }
-        .close-btn, .submit-btn, .copy-btn {
+        .close-btn, .copy-btn, .calculate-btn {
             background-color: #007bff;
             color: #fff;
             padding: 10px 20px;
@@ -95,13 +95,13 @@
         .copy-btn {
             background-color: #28a745;
         }
-        .submit-btn {
-            background-color: #dc3545;
+        .calculate-btn {
+            background-color: #17a2b8;
         }
     </style>
 </head>
 <body>
-    <header>Compre minha ação por 1,99</header>
+    <header>Administrador</header>
     <div class="container">
         <div class="chart" id="chart">
             <!-- Gráfico ilustrativo -->
@@ -115,9 +115,15 @@
     <!-- Modal de Compra -->
     <div class="modal" id="buyModal">
         <div class="modal-content">
-            <h2>Chave Pix para Pagamento</h2>
-            <p>Chave Pix: <strong id="pixKey">00020126360014BR.GOV.BCB.PIX0114+559898178095352040000530398654041.995802BR5908Contador6008Sao Luis62100506Crypto6304313D</strong></p>
-            <button class="copy-btn" onclick="copyPixKey()">Copiar Chave Pix</button>
+            <h2>Comprar Ação</h2>
+            <p>Preço por unidade: <strong>R$ 1,99</strong></p>
+            <p>Digite a quantidade que deseja comprar:</p>
+            <input type="number" id="quantity" min="1" placeholder="Quantidade">
+            <p id="totalPrice">Total: R$ 0,00</p>
+            <button class="calculate-btn" onclick="calculateTotal()">Calcular Total</button>
+            <p><strong>Código Pix:</strong></p>
+            <textarea id="pixCode" readonly rows="4" style="width: 100%; font-size: 14px;"></textarea>
+            <button class="copy-btn" onclick="copyPixCode()">Copiar Código Pix</button>
             <button class="close-btn" onclick="closeModal('buyModal')">Fechar</button>
         </div>
     </div>
@@ -125,22 +131,26 @@
     <!-- Modal de Venda -->
     <div class="modal" id="sellModal">
         <div class="modal-content">
-            <h2>Reembolso</h2>
-            <p>Digite sua chave Pix para receber o reembolso:</p>
+            <h2>Venda</h2>
+            <p>Digite sua chave Pix mesma foi efetuado a compra:</p>
             <input type="text" id="userPixKey" placeholder="Digite sua chave Pix">
-            <button class="submit-btn" onclick="submitRefund()">Solicitar Reembolso</button>
+            <button class="copy-btn" onclick="submitRefund()">Venda</button>
             <button class="close-btn" onclick="closeModal('sellModal')">Fechar</button>
         </div>
     </div>
 
-    <footer>© 2025 Roni Coin. Todos os direitos reservados.</footer>
+    <footer>© 2025 sucesso. Todos os direitos reservados.</footer>
 
     <script>
-        // Função para abrir o modal
+        const basePixCode = "00020126360014BR.GOV.BCB.PIX0114+55989817809535204000053039865404"; // Prefixo fixo do Pix
+        const suffixPixCode = "5802BR5908Contador6008Sao Luis62100506Crypto6304313D"; // Sufixo fixo do Pix
+
+        // Função para abrir o modal de compra
         function openBuyModal() {
             document.getElementById('buyModal').style.display = 'flex';
         }
 
+        // Função para abrir o modal de venda
         function openSellModal() {
             document.getElementById('sellModal').style.display = 'flex';
         }
@@ -150,14 +160,34 @@
             document.getElementById(modalId).style.display = 'none';
         }
 
-        // Função para copiar a chave Pix
-        function copyPixKey() {
-            const pixKey = document.getElementById('pixKey').textContent;
-            navigator.clipboard.writeText(pixKey).then(() => {
-                alert('Chave Pix copiada para a área de transferência!');
-            }).catch(err => {
-                console.error('Erro ao copiar chave Pix: ', err);
-            });
+        // Função para calcular o total
+        function calculateTotal() {
+            const quantity = document.getElementById('quantity').value;
+            const pricePerUnit = 1.99;
+            const total = quantity * pricePerUnit;
+            document.getElementById('totalPrice').textContent = `Total: R$ ${total.toFixed(2)}`;
+
+            // Atualizar o código Pix com o valor total
+            const totalValue = total.toFixed(2).replace(".", ""); // Formato sem ponto decimal
+            const updatedPixCode = `${basePixCode}${totalValue}${suffixPixCode}`;
+            document.getElementById('pixCode').value = updatedPixCode;
+        }
+
+        // Função para copiar o código Pix
+        function copyPixCode() {
+            const pixCode = document.getElementById('pixCode');
+            pixCode.select();
+            try {
+                const success = document.execCommand('copy');
+                if (success) {
+                    alert('Código Pix copiado para a área de transferência!');
+                } else {
+                    alert('Não foi possível copiar o código Pix.');
+                }
+            } catch (err) {
+                console.error('Erro ao copiar código Pix: ', err);
+                alert('Erro ao copiar o código Pix.');
+            }
         }
 
         // Função para processar o reembolso
